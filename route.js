@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const GoogleCustomSearch = require("./services/google-custom-search");
+const { KafkaDriver, keywordResMap } = require("./services/kafka");
 
 TOTAL_URLS = 10;
+
+PRODUCER_TOPIC = "urls"
 
 router.get('/', (req, res) => {
     res.render("index");
@@ -38,7 +41,7 @@ router.get('/search',async (req,res)=>{
         };
         // Send urls to kafka urls topic
         try {
-            //await KafkaDriver.sendMessage(PRODUCER_TOPIC, message);
+            await KafkaDriver.sendMessage(PRODUCER_TOPIC, message);
             res.json(message);
             console.log(word);
             console.log(urlsString.split(' '));

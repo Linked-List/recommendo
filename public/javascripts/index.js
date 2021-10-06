@@ -16,11 +16,9 @@ async function onSearchButtonClicked(event) {
     } catch(error) {
         console.log(error);
     }
-    console.log(response);
-    //let result = response.data.item.relatedKeywords;
+    let result = response.data.item.relatedKeywords;
 
-    //result = result.split(" ");
-
+    result = result.split(" ");
     //showResult(result, startTime);
 }
 
