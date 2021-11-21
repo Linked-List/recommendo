@@ -7,6 +7,7 @@ const PRODUCER_OPTIONS = {
 const CUSTOMER_OPTIONS = {
 
 };
+const CONSUMER_TOPIC = "tfIdfResults"; // TODO: 토픽명 확인
 const KAFKA_HOST = "localhost:9092"
 let IS_PRODUCER_READY = 0;
 
@@ -23,6 +24,34 @@ producer.on("ready", () => {
 // producer.on("error", (error) => {
 //     throw new CustomError("Kafka Producer Error", 500, error);
 // });
+// init consumer
+const consumer = new kafka.Consumer(client, [
+    { topic: CONSUMER_TOPIC, partition: 0 }
+]);
+consumer.on("message", (message) => {
+    const word = message.key;
+    const result = message.value;
+    const resArr = keywordResMap.get(word);
+    const nowms = Date.now();
+	if(resArr) {
+		for(const res of resArr) {
+            res.status(201).json({ 
+				"resultCode": 201,
+				"resultMsg": "Successfully calc related keywords",
+				"item": {
+					"keyword": word,
+					"relatedKeywords": result,
+					"lastModified": nowms,
+				}
+			});
+        }
+        keywordResMap.delete(word);
+
+		MongoDriver.updateDocument(word, result, nowms);
+    } else {
+        throw new CustomError("Cannot find res object", 500);  
+    }
+});
 
 class KafkaDriver {
     static sendMessage(topic, message) {        

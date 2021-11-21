@@ -12,7 +12,6 @@ router.get('/', (req, res) => {
 });
 router.get('/search',async (req,res)=>{  
     console.log(req.query);
-    //res.json({message: 'hello'});  
     let word = req.query.word; // WARNING: req.query.word is object. not string
     const regex = /^[가-힣a-zA-Z0-9]+$/;
     word = regex.exec(word);
@@ -42,9 +41,9 @@ router.get('/search',async (req,res)=>{
         // Send urls to kafka urls topic
         try {
             await KafkaDriver.sendMessage(PRODUCER_TOPIC, message);
-            res.json(message);
-            console.log(word);
-            console.log(urlsString.split(' '));
+            // res.json(message);
+            // console.log(word);
+            // console.log(urlsString.split(' '));
         } catch(error) {
             console.log(error);
             return next(error);
