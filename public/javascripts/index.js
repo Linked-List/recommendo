@@ -2,7 +2,7 @@ function showResult(result, startTime) {
     const resultDiv = document.querySelector(".js-result");
     resultDiv.innerHTML = "";
 
-    // Å×ÀÌºí, Å×ÀÌºí Çì´õ »ı¼º
+    // í…Œì´ë¸”, í…Œì´ë¸” í—¤ë” ìƒì„±
     const table = document.createElement("table");
     const tableHead = document.createElement("thead");
 
@@ -19,8 +19,8 @@ function showResult(result, startTime) {
     similarityHeadData.style.fontWeight = "bold";
     similarityHeadData.style.border = "1px solid black";
 
-    wordHeadData.innerText = "´Ü¾î";
-    similarityHeadData.innerText = "À¯»çµµ";
+    wordHeadData.innerText = "ë‹¨ì–´";
+    similarityHeadData.innerText = "ìœ ì‚¬ë„";
 
     tableHeadRow.appendChild(wordHeadData);
     tableHeadRow.appendChild(similarityHeadData);
@@ -29,23 +29,23 @@ function showResult(result, startTime) {
 
     table.appendChild(tableHead);
 
-    // Å×ÀÌºí ¹Ùµğ »ı¼º
+    // í…Œì´ë¸” ë°”ë”” ìƒì„±
     const tableBody = document.createElement("tbody");
-    for(let i=0; i<result.length; i+=2) {
+    for (let i = 0; i < result.length; i += 2) {
         const tableBodyRow = document.createElement("tr");
 
-        const wordBodyData = document.createElement("td"); 
-        const similarityBodyData = document.createElement("td"); 
-        
+        const wordBodyData = document.createElement("td");
+        const similarityBodyData = document.createElement("td");
+
         const word = result[i];
-        const similarity = result[i+1];
+        const similarity = result[i + 1];
 
         wordBodyData.innerText = word;
         similarityBodyData.innerText = similarity
 
         tableBodyRow.appendChild(wordBodyData);
         tableBodyRow.appendChild(similarityBodyData);
-        
+
         tableBody.appendChild(tableBodyRow);
     }
 
@@ -53,7 +53,7 @@ function showResult(result, startTime) {
     resultDiv.appendChild(table);
 
     const endTime = Date.now();
-    console.log(`°É¸° ½Ã°£ = ${(endTime - startTime) / 1000}ÃÊ`);
+    console.log(`ê±¸ë¦° ì‹œê°„ = ${(endTime - startTime) / 1000}ì´ˆ`);
 }
 
 async function onSearchButtonClicked(event) {
@@ -71,7 +71,7 @@ async function onSearchButtonClicked(event) {
             url,
             method,
         });
-    } catch(error) {
+    } catch (error) {
         console.log(error);
     }
     let result = response.data.item.relatedKeywords;
