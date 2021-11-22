@@ -11,7 +11,7 @@ from functools import cmp_to_key
 
 from kafka import KafkaProducer
 
-DOCUMENT_COUNT = 2
+DOCUMENT_COUNT = 10
 TOP_N_WORDS = 5
 PRODUCER_TOPIC = "tfIdfResults"
 CONSUMER_TOPIC = "crawledResults"
@@ -164,7 +164,7 @@ def save_rdd(rdd):
     for word, count_list in keyword_map[keyword]["word_count"].items():
         while(len(count_list) < document_count):
             count_list.append(0)
-
+    print(keyword_map[keyword]["document_count"]+"th Document Get")
     if keyword_map[keyword]["document_count"] == DOCUMENT_COUNT:
         calc_result = calc_term_term_matrix(keyword)
 

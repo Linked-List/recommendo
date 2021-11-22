@@ -30,6 +30,7 @@ const consumer = new kafka.Consumer(client, [
     { topic: CONSUMER_TOPIC, partition: 0 }
 ]);
 consumer.on("message", (message) => {
+
     const word = message.key;
     const result = message.value;
     const resArr = keywordResMap.get(word);
@@ -47,8 +48,6 @@ consumer.on("message", (message) => {
             });
         }
         keywordResMap.delete(word);
-
-        MongoDriver.updateDocument(word, result, nowms);
     } else {
         throw new CustomError("Cannot find res object", 500);
     }

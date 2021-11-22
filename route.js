@@ -10,20 +10,32 @@ PRODUCER_TOPIC = "urls"
 router.get('/', (req, res) => {
     res.render("index");
 });
-router.get('/search',async (req,res)=>{  
+router.get('/search', async (req, res) => {
     console.log(req.query);
     let word = req.query.word; // WARNING: req.query.word is object. not string
     const regex = /^[가-힣a-zA-Z0-9]+$/;
     word = regex.exec(word);
 
+    // Remember keyword - res object pair until tf-idf calculated
+    // If the keyword is already in process, just add res object to value array
+    // If not, create key-value pair and insert
+    if (keywordResMap.has(word)) {
+        const resArr = keywordResMap.get(word);
+        resArr.push(res);
+    } else {
+        const resArr = new Array();
+        resArr.push(res);
+        keywordResMap.set(word[0], resArr);
+    }
+
     // Google Custom Search Engine
     const encodedWord = encodeURIComponent(word);
     let urlCount = 0;
     let items;
-    while(urlCount < TOTAL_URLS) { // TODO: 429 에러 안뜨는지 확인
+    while (urlCount < TOTAL_URLS) { // TODO: 429 에러 안뜨는지 확인
         try {
-            items = await GoogleCustomSearch.run(encodedWord, urlCount+1);
-        } catch(error) {
+            items = await GoogleCustomSearch.run(encodedWord, urlCount + 1);
+        } catch (error) {
             console.log(error);
             return next(error);
         }
@@ -31,7 +43,7 @@ router.get('/search',async (req,res)=>{
 
         // urls array to one string format
         let urlsString = "";
-        for(const url of urls)
+        for (const url of urls)
             urlsString += `${url} `;
 
         const message = {
@@ -44,7 +56,7 @@ router.get('/search',async (req,res)=>{
             // res.json(message);
             // console.log(word);
             // console.log(urlsString.split(' '));
-        } catch(error) {
+        } catch (error) {
             console.log(error);
             return next(error);
         }
