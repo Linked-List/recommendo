@@ -18,8 +18,9 @@ const stuckedMessages = [];
 
 // init producer
 const producer = new kafka.Producer(client);
-producer.on("ready", () => {
+producer.on("ready", async () => {
     IS_PRODUCER_READY = 1;
+    await createTopic(CONSUMER_TOPIC);
 });
 // producer.on("error", (error) => {
 //     throw new CustomError("Kafka Producer Error", 500, error);
@@ -33,33 +34,33 @@ consumer.on("message", (message) => {
     const result = message.value;
     const resArr = keywordResMap.get(word);
     const nowms = Date.now();
-	if(resArr) {
-		for(const res of resArr) {
-            res.status(201).json({ 
-				"resultCode": 201,
-				"resultMsg": "Successfully calc related keywords",
-				"item": {
-					"keyword": word,
-					"relatedKeywords": result,
-					"lastModified": nowms,
-				}
-			});
+    if (resArr) {
+        for (const res of resArr) {
+            res.status(201).json({
+                "resultCode": 201,
+                "resultMsg": "Successfully calc related keywords",
+                "item": {
+                    "keyword": word,
+                    "relatedKeywords": result,
+                    "lastModified": nowms,
+                }
+            });
         }
         keywordResMap.delete(word);
 
-		MongoDriver.updateDocument(word, result, nowms);
+        MongoDriver.updateDocument(word, result, nowms);
     } else {
-        throw new CustomError("Cannot find res object", 500);  
+        throw new CustomError("Cannot find res object", 500);
     }
 });
 
 class KafkaDriver {
-    static sendMessage(topic, message) {        
-        if(IS_PRODUCER_READY) {
+    static sendMessage(topic, message) {
+        if (IS_PRODUCER_READY) {
             const keyedMessage = new kafka.KeyedMessage(message.key, message.value)
             const kafkaMessage = [{ topic, messages: keyedMessage }];
             producer.send(kafkaMessage, (error, data) => {
-                if(error) {
+                if (error) {
                     throw new CustomError("Kafka producer send message error", 500, error);
                 } else {
                     console.log("send message!");
@@ -79,13 +80,13 @@ class KafkaDriver {
             await new Promise((resolve, reject) => {
                 client.loadMetadataForTopics([topic], (error, result) => {
                     const topics = Object.keys(result[1].metadata);
-                    if(topics.includes(topic))
+                    if (topics.includes(topic))
                         reject(result);
                     else
                         resolve();
                 });
             });
-        } catch(error) {
+        } catch (error) {
             return;
         }
 
@@ -99,7 +100,7 @@ class KafkaDriver {
         ];
         return new Promise((resolve, reject) => {
             client.createTopics(topicsToCreate, (error, result) => {
-                if(result) {
+                if (result) {
                     reject(result);
                 } else {
                     console.log(`[Kafka] Create topic '${topic}' Successfully`);
@@ -110,7 +111,7 @@ class KafkaDriver {
     }
 }
 
-module.exports = { 
+module.exports = {
     KafkaDriver,
     keywordResMap,
 };
