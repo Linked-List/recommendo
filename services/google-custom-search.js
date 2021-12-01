@@ -1,6 +1,5 @@
 const axios = require("axios");
 const secrets = require("../secrets.json");
-//const CustomError = require("../errors");
 
 const KEY = secrets.KEY;
 const CX = secrets.CX;
@@ -14,7 +13,7 @@ class GoogleCustomSearch {
         const lr = "lang_kr";       // Restrict documents wrote in korean
         // start : start index of cse return values
         // num : number of cse return values
-    
+
         let query = `key=${KEY}&cx=${CX}&`;
         query += `c2coff=${c2coff}&`;
         query += `filter=${filter}&`;
@@ -22,7 +21,7 @@ class GoogleCustomSearch {
         query += `lr=${lr}&`;
 
         const curQuery = `${query}&start=${startPage}&num=${REQ_PAGE_SIZE}`;
-    
+
         const config = {
             method: "get",
             url: `https://www.googleapis.com/customsearch/v1?${curQuery}`,
@@ -32,13 +31,12 @@ class GoogleCustomSearch {
         let res;
         try {
             res = await axios(config); // if search result doesn't exist, res is undefined
-        } catch(error) {
+        } catch (error) {
             console.log(error);
-            //throw new CustomError("Google CSE Request Error", 500);
         }
 
         // if search result exists
-        if(res)
+        if (res)
             return res.data.items;
         else
             return [];
@@ -46,7 +44,7 @@ class GoogleCustomSearch {
 
     static extractUrls(items) {
         let urls = null;
-        if(items)
+        if (items)
             urls = items.map(n => n.link);
         return urls;
     }

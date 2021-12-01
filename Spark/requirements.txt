@@ -1,10 +1,10 @@
-beautifulsoup4==4.9.3
 bs4==0.0.1
 joblib==1.0.1
+beautifulsoup4==4.6.0
 kafka-python
 numpy==1.20.3
 pandas==1.2.4
-py4j==0.10.7
+py4j==0.10.9.2
 pypandoc==1.5
 pyspark
 python-dateutil==2.8.1
@@ -15,3 +15,5 @@ six==1.16.0
 sklearn==0.0
 soupsieve==2.2.1
 threadpoolctl==2.1.0
+konlpy
+tweepy==3.10.0

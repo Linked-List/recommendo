@@ -12,12 +12,12 @@ from functools import cmp_to_key
 from kafka import KafkaProducer
 
 DOCUMENT_COUNT = 10
-TOP_N_WORDS = 5
+TOP_N_WORDS = 15
 PRODUCER_TOPIC = "tfIdfResults"
 CONSUMER_TOPIC = "crawledResults"
 BROKER_LIST = "13.125.8.247:9092"
 
-producer = KafkaProducer(bootstrap_servers="13.125.8.247:9092",
+producer = KafkaProducer(bootstrap_servers=BROKER_LIST,
                          key_serializer=str.encode, value_serializer=str.encode)
 
 sc = SparkContext(appName='test')
@@ -106,6 +106,11 @@ def calc_term_term_matrix(keyword):
     print(cosine_similarity_list)
     cosine_similarity_list = sorted(
         cosine_similarity_list, key=cmp_to_key(compare))
+    for i in range(len(cosine_similarity_list)):
+        if(cosine_similarity_list[i][1] <= 0.99):  # 0.99 이하만 출력
+            print(cosine_similarity_list)
+            del(keyword_map[keyword])
+            return cosine_similarity_list[i:TOP_N_WORDS+i]
     print(cosine_similarity_list)
 
     del(keyword_map[keyword])
@@ -164,7 +169,9 @@ def save_rdd(rdd):
     for word, count_list in keyword_map[keyword]["word_count"].items():
         while(len(count_list) < document_count):
             count_list.append(0)
-    print(keyword_map[keyword]["document_count"]+"th Document Get")
+
+    print(str(keyword_map[keyword]["document_count"])+"th Url Complete")
+
     if keyword_map[keyword]["document_count"] == DOCUMENT_COUNT:
         calc_result = calc_term_term_matrix(keyword)
 

@@ -53,9 +53,6 @@ router.get('/search', async (req, res) => {
         // Send urls to kafka urls topic
         try {
             await KafkaDriver.sendMessage(PRODUCER_TOPIC, message);
-            // res.json(message);
-            // console.log(word);
-            // console.log(urlsString.split(' '));
         } catch (error) {
             console.log(error);
             return next(error);

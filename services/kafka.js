@@ -1,5 +1,4 @@
 const kafka = require("kafka-node");
-// const CustomError = require("../errors");
 
 const PRODUCER_OPTIONS = {
 
@@ -7,7 +6,7 @@ const PRODUCER_OPTIONS = {
 const CUSTOMER_OPTIONS = {
 
 };
-const CONSUMER_TOPIC = "tfIdfResults"; // TODO: 토픽명 확인
+const CONSUMER_TOPIC = "tfIdfResults";
 const KAFKA_HOST = "localhost:9092"
 let IS_PRODUCER_READY = 0;
 
@@ -20,12 +19,7 @@ const stuckedMessages = [];
 const producer = new kafka.Producer(client);
 producer.on("ready", async () => {
     IS_PRODUCER_READY = 1;
-    await createTopic(CONSUMER_TOPIC);
 });
-// producer.on("error", (error) => {
-//     throw new CustomError("Kafka Producer Error", 500, error);
-// });
-// init consumer
 const consumer = new kafka.Consumer(client, [
     { topic: CONSUMER_TOPIC, partition: 0 }
 ]);
@@ -89,7 +83,6 @@ class KafkaDriver {
             return;
         }
 
-        // TODO: 실제 실행 환경에서는 partitions, replicationFactor 모두 3으로 수정 필요
         const topicsToCreate = [
             {
                 topic,

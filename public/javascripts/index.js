@@ -64,6 +64,7 @@ async function onSearchButtonClicked(event) {
 
     const url = `/search?word=${searchTerm}`;
     const method = "get";
+    const startTime = Date.now();
     console.log(`${searchTerm}`);
     let response;
     try {
